@@ -1,0 +1,22 @@
+databases:
+  - name: alx_travel
+    plan: free
+    databaseName: alx_travel_app
+    user: alx_travel_app
+
+services:
+  - type: web
+    plan: free
+    name: alx_travel_app
+    runtime: python
+    buildCommand: './build.sh'
+    startCommand: 'python -m gunicorn alx_travel_app.asgi:application -k uvicorn.workers.UvicornWorker'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: alx_travel
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4

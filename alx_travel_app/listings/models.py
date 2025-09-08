@@ -12,6 +12,7 @@ class Listing(models.Model):
     description = models.TextField()
     price_per_night = models.DecimalField(max_digits=8, decimal_places=2)
     location = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='listing_images/', blank=True, null=True)  # new field
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
