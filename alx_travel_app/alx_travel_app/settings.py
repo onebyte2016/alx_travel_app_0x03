@@ -43,7 +43,7 @@ SECRET_KEY = 'django-insecure-840pk@%=!j%zd^0qz3+bb-!mvp&xf#727upza9b3tmn(*j89_u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 DEFAULT_FROM_EMAIL = "ogboemmandu@gmail.com"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # dev only
@@ -103,12 +103,6 @@ WSGI_APPLICATION = 'alx_travel_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': dj_database_url.config(
