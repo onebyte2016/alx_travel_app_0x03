@@ -33,7 +33,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         # Trigger async email
         send_booking_confirmation_email.delay(
-            booking.customer.email,
+            booking.user_id.email,
             booking.id,
             booking.trip.name
         )
