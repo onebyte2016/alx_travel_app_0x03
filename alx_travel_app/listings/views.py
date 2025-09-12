@@ -33,25 +33,13 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         if request.user.is_authenticated:
             booking = serializer.save(user=request.user)
-            email = booking.user.email
+            email = request.user.email
+            name = request.user.username
         else:
-            # 👇 Ensure guest must provide name + email
-            guest_name = serializer.validated_data.get("guest_name")
-            guest_email = serializer.validated_data.get("guest_email")
-            if not guest_name or not guest_email:
-                return Response(
-                    {"error": "Guests must provide name and email."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
             booking = serializer.save()
-            email = guest_email
+            email = booking.guest_email
+            name = booking.guest_name
 
-        # Trigger async email
-        # send_booking_confirmation_email.delay(
-        #     email,
-        #     booking.id,
-        #     booking.listing.title
-        # )
         # send confirmation email (synchronous)
         if email:
             send_mail(
@@ -63,6 +51,47 @@ class BookingViewSet(viewsets.ModelViewSet):
             )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# class BookingViewSet(viewsets.ModelViewSet):
+#     queryset = Booking.objects.all()
+#     serializer_class = BookingSerializer
+
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+
+#         if request.user.is_authenticated:
+#             booking = serializer.save(user=request.user)
+#             email = booking.user.email
+#         else:
+#             # 👇 Ensure guest must provide name + email
+#             guest_name = serializer.validated_data.get("guest_name")
+#             guest_email = serializer.validated_data.get("guest_email")
+#             if not guest_name or not guest_email:
+#                 return Response(
+#                     {"error": "Guests must provide name and email."},
+#                     status=status.HTTP_400_BAD_REQUEST
+#                 )
+#             booking = serializer.save()
+#             email = guest_email
+
+#         # Trigger async email
+#         # send_booking_confirmation_email.delay(
+#         #     email,
+#         #     booking.id,
+#         #     booking.listing.title
+#         # )
+#         # send confirmation email (synchronous)
+#         if email:
+#             send_mail(
+#                 subject="Booking Confirmation",
+#                 message=f"Hello {name}, your booking for {booking.listing.title} is confirmed!",
+#                 from_email=settings.DEFAULT_FROM_EMAIL,
+#                 recipient_list=[email],
+#                 fail_silently=True,
+#             )
+
+        # return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
