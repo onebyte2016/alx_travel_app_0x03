@@ -18,8 +18,20 @@ class Listing(models.Model):
     def __str__(self):
         return self.title
 
+# class Booking(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+#     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bookings")
+#     check_in = models.DateField()
+#     check_out = models.DateField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.user.username} booked {self.listing.title}"
+
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
+    guest_name = models.CharField(max_length=255, blank=True, null=True)
+    guest_email = models.EmailField(blank=True, null=True)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bookings")
     check_in = models.DateField()
     check_out = models.DateField()
