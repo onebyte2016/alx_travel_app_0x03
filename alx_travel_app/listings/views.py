@@ -29,16 +29,19 @@ class BookingViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        booking = serializer.save()
+
+        # assign the logged-in user automatically
+        booking = serializer.save(user=request.user)
 
         # Trigger async email
         send_booking_confirmation_email.delay(
-            booking.user_id.email,
+            booking.user.email,
             booking.id,
-            booking.trip.name
+            booking.listing.title  # fixed: use listing title instead of trip
         )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 CHAPA_SECRET_KEY = os.environ.get("CHAPA_SECRET_KEY", "")
