@@ -14,6 +14,7 @@ from rest_framework.response import Response
 
 from .models import Booking, Payment
 from .tasks import send_booking_confirmation_email
+from django.core.mail import send_mail
 
 
 
