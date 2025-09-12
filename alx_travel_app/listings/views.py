@@ -46,11 +46,20 @@ class BookingViewSet(viewsets.ModelViewSet):
             email = guest_email
 
         # Trigger async email
-        send_booking_confirmation_email.delay(
-            email,
-            booking.id,
-            booking.listing.title
-        )
+        # send_booking_confirmation_email.delay(
+        #     email,
+        #     booking.id,
+        #     booking.listing.title
+        # )
+        # send confirmation email (synchronous)
+        if email:
+            send_mail(
+                subject="Booking Confirmation",
+                message=f"Hello {name}, your booking for {booking.listing.title} is confirmed!",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=True,
+            )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
