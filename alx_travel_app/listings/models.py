@@ -29,7 +29,11 @@ class Listing(models.Model):
 #         return f"{self.user.username} booked {self.listing.title}"
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings", null=True, blank=True)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name="bookings",
+        null=True, blank=True   # 👈 allow null if it's a guest
+    )
     guest_name = models.CharField(max_length=255, blank=True, null=True)
     guest_email = models.EmailField(blank=True, null=True)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bookings")
@@ -38,7 +42,10 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} booked {self.listing.title}"
+        if self.user:
+            return f"{self.user.username} booked {self.listing.title}"
+        return f"Guest {self.guest_name} booked {self.listing.title}"
+
 
 # class Booking(models.Model):
 #     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

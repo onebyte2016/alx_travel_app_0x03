@@ -10,5 +10,5 @@ class ListingSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = '__all__'
-        read_only_fields = ("user", "created_at")
+        fields = ["id", "user", "guest_name", "guest_email", "listing", "check_in", "check_out", "created_at"]
+        read_only_fields = ["id", "created_at", "user"]  # user is auto-set if logged in

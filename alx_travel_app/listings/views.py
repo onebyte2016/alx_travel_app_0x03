@@ -30,17 +30,30 @@ class BookingViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # assign the logged-in user automatically
-        booking = serializer.save(user=request.user)
+        if request.user.is_authenticated:
+            booking = serializer.save(user=request.user)
+            email = booking.user.email
+        else:
+            # 👇 Ensure guest must provide name + email
+            guest_name = serializer.validated_data.get("guest_name")
+            guest_email = serializer.validated_data.get("guest_email")
+            if not guest_name or not guest_email:
+                return Response(
+                    {"error": "Guests must provide name and email."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            booking = serializer.save()
+            email = guest_email
 
         # Trigger async email
         send_booking_confirmation_email.delay(
-            booking.user.email,
+            email,
             booking.id,
-            booking.listing.title  # fixed: use listing title instead of trip
+            booking.listing.title
         )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 
